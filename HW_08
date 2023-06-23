@@ -1,0 +1,39 @@
+import datetime
+
+def get_birthdays_per_week(users):
+    today = datetime.datetime.now().date()
+    week_start = today - datetime.timedelta(days=today.weekday())
+    week_end = week_start + datetime.timedelta(days=6)
+    
+    weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    birthday_per_week = {day: [] for day in weekdays}
+    
+    for user in users:
+        name = user['name']
+        birthday = user['birthday'].date()
+        if week_start <= birthday <= week_end:
+            if birthday.weekday() >= 5:  # If birthday falls on a weekend
+                birthday_per_week['Monday'].append(name)
+            else:
+                birthday_per_week[weekdays[birthday.weekday()]].append(name)
+    
+    if today.weekday() == 6:  # If today is Sunday, move Sunday's birthdays to Monday
+        birthday_per_week['Monday'].extend(birthday_per_week['Sunday'])
+        birthday_per_week['Sunday'] = []
+    
+    for day, birthdays in birthday_per_week.items():
+        if birthdays:
+            if day == 'Monday':
+                print(f"{day}: {', '.join(birthdays)} (including weekend birthdays)")
+            else:
+                print(f"{day}: {', '.join(birthdays)}")
+
+# Приклад використання:
+users = [
+    {'name': 'John', 'birthday': datetime.datetime(2023, 6, 24)},
+    {'name': 'Alice', 'birthday': datetime.datetime(2023, 6, 26)},
+    {'name': 'Bob', 'birthday': datetime.datetime(2023, 6, 27)},
+    {'name': 'Eve', 'birthday': datetime.datetime(2023, 6, 30)}
+]
+
+get_birthdays_per_week(users)
